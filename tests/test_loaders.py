@@ -1,8 +1,6 @@
 import pytest
 from datetime import date
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sports_data.loaders.sqlite import SQLiteMatchLoader, FactMatchLog, Base
+from sports_data.loaders.sqlite import SQLiteMatchLoader, FactMatchLog
 
 @pytest.fixture
 def loader():

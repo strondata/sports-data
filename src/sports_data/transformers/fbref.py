@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any
 import pandas as pd
 from datetime import datetime
 from sports_data.core.interfaces import BaseTransformer

@@ -2,7 +2,7 @@ import logging
 import hashlib
 from typing import Any, List, Dict
 from datetime import datetime
-from sqlalchemy import create_engine, Column, String, Integer, Float, Date, DateTime, PrimaryKeyConstraint, Index
+from sqlalchemy import create_engine, Column, String, Integer, Float, Date, DateTime
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.dialects.sqlite import insert
 from sports_data.core.interfaces import BaseLoader

@@ -1,5 +1,6 @@
 import pytest
 import responses
+import unittest.mock
 from sports_data.extractors.fbref import FBRefMatchLogExtractor
 from sports_data.core.exceptions import RateLimitError, ExtractionError
 
@@ -23,7 +24,15 @@ MOCK_HTML = """
 """
 
 @responses.activate
-def test_fbref_extractor_success():
+@unittest.mock.patch('cloudscraper.create_scraper')
+def test_fbref_extractor_success(mock_create_scraper):
+    mock_scraper = unittest.mock.Mock()
+    mock_create_scraper.return_value = mock_scraper
+
+    mock_response = unittest.mock.Mock()
+    mock_response.status_code = 200
+    mock_response.content = MOCK_HTML.encode('utf-8')
+    mock_scraper.get.return_value = mock_response
     url = "https://fbref.com/en/squads/054efa67/2025-2026/matchlogs/all_comps/schedule/Bayern-Munich-Scores-and-Fixtures-All-Competitions"
     responses.add(responses.GET, url, body=MOCK_HTML, status=200)
 
@@ -36,20 +45,31 @@ def test_fbref_extractor_success():
     assert result["data"][0]["Date"] == "2025-08-20"
     assert result["data"][0]["Opponent"] == "Dortmund"
 
-@responses.activate
-def test_fbref_extractor_rate_limit():
-    url = "https://fbref.com/rate_limit_url"
-    responses.add(responses.GET, url, status=429)
+@unittest.mock.patch('cloudscraper.create_scraper')
+def test_fbref_extractor_rate_limit(mock_create_scraper):
+    mock_scraper = unittest.mock.Mock()
+    mock_create_scraper.return_value = mock_scraper
 
+    mock_response = unittest.mock.Mock()
+    mock_response.status_code = 429
+    mock_scraper.get.return_value = mock_response
+
+    url = "https://fbref.com/rate_limit_url"
     extractor = FBRefMatchLogExtractor(delay=0)
     with pytest.raises(RateLimitError):
         extractor.extract(url=url)
 
-@responses.activate
-def test_fbref_extractor_missing_table():
-    url = "https://fbref.com/missing_table"
-    responses.add(responses.GET, url, body="<html><body>No table here</body></html>", status=200)
+@unittest.mock.patch('cloudscraper.create_scraper')
+def test_fbref_extractor_missing_table(mock_create_scraper):
+    mock_scraper = unittest.mock.Mock()
+    mock_create_scraper.return_value = mock_scraper
 
+    mock_response = unittest.mock.Mock()
+    mock_response.status_code = 200
+    mock_response.content = b"<html><body>No table here</body></html>"
+    mock_scraper.get.return_value = mock_response
+
+    url = "https://fbref.com/missing_table"
     extractor = FBRefMatchLogExtractor(delay=0)
     with pytest.raises(ExtractionError, match="Table 'matchlogs_for' not found"):
         extractor.extract(url=url)

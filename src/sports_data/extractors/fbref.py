@@ -1,20 +1,37 @@
 import logging
 import time
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
-from typing import Any, List, Dict
+from typing import Any, Dict
 import pandas as pd
 from sports_data.core.interfaces import BaseExtractor
 from sports_data.core.exceptions import ExtractionError, RateLimitError
 from io import StringIO
 
+import random
+
 logger = logging.getLogger(__name__)
+
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0",
+    "Mozilla/5.0 (X11; Linux i686; rv:121.0) Gecko/20100101 Firefox/121.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+]
 
 class FBRefMatchLogExtractor(BaseExtractor):
     def __init__(self, delay: int = 3):
         self.delay = delay
-        self.headers = {
-            "User-Agent": "sports-data-etl/1.0 (Contact: user@example.com)"
+
+    def get_headers(self) -> Dict[str, str]:
+        return {
+            "User-Agent": random.choice(USER_AGENTS),
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         }
 
     def extract(self, **kwargs: Any) -> Any:
@@ -25,7 +42,9 @@ class FBRefMatchLogExtractor(BaseExtractor):
         logger.info(f"Extracting from {url} with a delay of {self.delay}s to respect rate limits.")
         time.sleep(self.delay)
 
-        response = requests.get(url, headers=self.headers)
+        headers = self.get_headers()
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url, headers=headers)
 
         if response.status_code == 429:
             logger.error("Rate limit exceeded (HTTP 429).")

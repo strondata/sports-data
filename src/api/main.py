@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, func
-from typing import List, Dict, Any
+from sqlalchemy import create_engine
 import logging
+from fastapi.middleware.cors import CORSMiddleware
 from sports_data.loaders.sqlite import FactMatchLog
 
 # Structured Logging Setup
@@ -10,8 +10,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}'
 )
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Sports Data API", version="1.0")
 

@@ -19,6 +19,7 @@ lxml = "^6.1.0"
 html5lib = "^1.1"
 typer = "^0.12.0"
 click = "<8.2"
+cloudscraper = "^1.2.71"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
