@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 app = typer.Typer(help="Sports Data ETL CLI")
 
 @app.command()
-def run(url: str = typer.Option(..., help="The FBref URL to scrape")):
+def run(url: str = typer.Argument(..., help="The FBref URL to scrape")):
     """
     Runs the ETL pipeline for a given FBref match logs URL.
     """

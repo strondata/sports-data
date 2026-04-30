@@ -34,7 +34,7 @@ while true; do
             ;;
         2)
             echo -e "\n${GREEN}Running ETL Pipeline...${NC}"
-            poetry run sports-data run --url "https://fbref.com/en/squads/054efa67/2025-2026/matchlogs/all_comps/schedule/Bayern-Munich-Scores-and-Fixtures-All-Competitions"
+            poetry run sports-data "https://fbref.com/en/squads/054efa67/2025-2026/matchlogs/all_comps/schedule/Bayern-Munich-Scores-and-Fixtures-All-Competitions"
             ;;
         3)
             echo -e "\n${GREEN}Running Tests...${NC}"
