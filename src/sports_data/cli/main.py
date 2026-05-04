@@ -1,7 +1,7 @@
 import typer
 import logging
 from sports_data.core.pipeline import ETLPipeline
-from sports_data.extractors.fbref import FBRefMatchLogExtractor
+from sports_data.extractors.local import LocalFBRefExtractor
 from sports_data.transformers.fbref import MatchLogTransformer
 from sports_data.loaders.sqlite import SQLiteMatchLoader
 
@@ -22,7 +22,7 @@ def run(url: str = typer.Argument(..., help="The FBref URL to scrape")):
     """
     logger.info(f"Starting CLI run for URL: {url}")
 
-    extractor = FBRefMatchLogExtractor(delay=3)
+    extractor = LocalFBRefExtractor()
     transformer = MatchLogTransformer()
     loader = SQLiteMatchLoader()
 
